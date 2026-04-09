@@ -431,6 +431,65 @@ def update_event(id):
 
     return redirect("/manage-events")
 
+def init_db():
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name TEXT,
+        email TEXT UNIQUE,
+        password TEXT,
+        role TEXT,
+        school TEXT
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS events (
+        id SERIAL PRIMARY KEY,
+        title TEXT,
+        description TEXT,
+        date TEXT,
+        school TEXT
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS registrations (
+        id SERIAL PRIMARY KEY,
+        event_id INTEGER,
+        student_email TEXT,
+        type TEXT,
+        group_name TEXT,
+        members TEXT
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS suggestions (
+        id SERIAL PRIMARY KEY,
+        title TEXT,
+        description TEXT,
+        location TEXT,
+        status TEXT,
+        school TEXT
+    );
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS results (
+        id SERIAL PRIMARY KEY,
+        event_id INTEGER,
+        winner TEXT,
+        school TEXT
+    );
+    """)
+
+    conn.commit()
+
+init_db()
 # ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
