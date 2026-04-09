@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Teacher Dashboard | SchoolEvHub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark">
+<div class="container d-flex justify-content-between align-items-center">
+
+<div class="d-flex align-items-center">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
+width="30" style="margin-right:8px;">
+<span class="navbar-brand mb-0">SchoolEvHub | {{ school }}</span>
+</div>
+
+<!-- 🔥 RIGHT SIDE BUTTONS -->
+<div class="d-flex gap-2">
+
+<a href="/view-registrations" 
+class="btn btn-sm"
+style="background:linear-gradient(45deg,#667eea,#764ba2); color:white;">
+Registered Students
+</a>
+
+<a href="/logout" class="btn btn-danger btn-sm">
+Logout
+</a>
+
+</div>
+
+</div>
+</nav>
+
+<!-- Header -->
+<section class="container my-4">
+<h1>Teacher Panel </h1>
+<h4 class="text-muted">Manage events and students of your school.</h4>
+</section>
+
+
+
+<!-- Quick Actions -->
+<section class="container mb-4">
+  <div class="row g-4">
+
+    <!-- Create Event -->
+    <div class="col-md-4">
+      <div class="custom-card shadow-sm">
+        
+        <div class="icon-circle">➕</div>
+
+        <div class="card-content">
+          <h5>Create Event</h5>
+          <p>Add a new school event.</p>
+          <a href="/add-event" class="btn btn-primary btn-sm">Add Event</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Manage Events -->
+    <div class="col-md-4">
+      <div class="custom-card shadow-sm">
+        
+        <div class="icon-circle">🛠️</div>
+
+        <div class="card-content">
+          <h5>Manage Events</h5>
+          <p>Edit or remove events.</p>
+          <a href="/manage-events" class="btn btn-primary btn-sm">View Events</a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Publish Results -->
+    <div class="col-md-4">
+      <div class="custom-card shadow-sm">
+        
+        <div class="icon-circle">🏆</div>
+
+        <div class="card-content">
+          <h5>Publish Results</h5>
+          <p>Announce event winners.</p>
+          <a href="/add-result" class="btn btn-primary btn-sm">Publish Results</a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Suggestions Section -->
+<section class="container mb-4">
+
+<!-- 🔥 ANALYTICS -->
+<section class="container mb-4">
+
+  <div class="row g-4">
+
+    <!-- Total Events -->
+    <div class="col-md-3">
+      <div class="custom-card shadow-sm">
+        <div class="card-content">
+          <h6>Total Events</h6>
+          <h3>{{ events|length }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Suggestions -->
+    <div class="col-md-3">
+      <div class="custom-card shadow-sm">
+        <div class="card-content">
+          <h6>Total Suggestions</h6>
+          <h3>{{ suggestions|length }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved -->
+    <div class="col-md-3">
+      <div class="custom-card shadow-sm">
+        <div class="card-content">
+          <h6>Approved</h6>
+          <h3>{{ suggestions | selectattr(5, "equalto", "approved") | list | length }}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<h3 class="mb-4">Student Suggestions 💡</h3>
+
+<!-- 🔥 FILTER BUTTONS -->
+<div class="mb-3">
+<button class="btn btn-outline-warning btn-sm" onclick="filterSuggestions('pending')">Pending</button>
+<button class="btn btn-outline-success btn-sm" onclick="filterSuggestions('approved')">Approved</button>
+<button class="btn btn-outline-secondary btn-sm" onclick="filterSuggestions('all')">All</button>
+</div>
+
+<div class="row g-3">
+
+{% if suggestions %}
+
+{% for s in suggestions %}
+
+<div class="col-md-7">
+<div class="card event-card h-100 suggestion-card" data-status="{{ s[5] }}">
+
+<div class="card-body">
+
+<!-- STATUS BADGE -->
+{% if s[5] == "pending" %}
+<span class="badge bg-warning text-dark mb-2">Pending</span>
+
+{% elif s[5] == "approved" %}
+<span class="badge bg-success mb-2">Approved</span>
+
+{% elif s[5] == "rejected" %}
+<span class="badge bg-danger mb-2">Rejected</span>
+{% endif %}
+
+<h5>{{ s[1] }}</h5>
+
+<p><strong>Category:</strong> {{ s[2] }}</p>
+
+<p>{{ s[3] }}</p>
+
+<p>📍 {{ s[4] }}</p>
+
+<div class="d-flex gap-2">
+
+<a href="/approve-suggestion/{{ s[0] }}" 
+class="btn btn-primary btn-sm w-50">
+Approve
+</a>
+
+<a href="/reject-suggestion/{{ s[0] }}" 
+class="btn btn-primary btn-sm w-50">
+Reject
+</a>
+
+</div>
+
+</div>
+</div>
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<p class="text-muted">No suggestions yet 😴</p>
+
+{% endif %}
+
+</div>
+
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="container text-center">
+<p>© 2026 SchoolEvHub. All rights reserved.</p>
+</div>
+</footer>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function filterSuggestions(status){
+
+    let cards = document.querySelectorAll(".suggestion-card");
+
+    cards.forEach(card => {
+        let s = card.getAttribute("data-status");
+
+        if(status === "all" || s === status){
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+</script>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init();
+</script>
+
+</body>
+</html>
