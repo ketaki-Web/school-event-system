@@ -7,12 +7,7 @@ app.secret_key = "secret123"
 
 # DB CONNECTION
 def get_conn():
-    return psycopg2.connect(
-        host="localhost",
-        database="schoolevhub",
-        user="postgres",
-        password="1234"
-    )
+    return psycopg2.connect(os.environ.get("DATABASE_URL"))
 
 # STATIC
 @app.route('/css/<path:filename>')
