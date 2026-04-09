@@ -489,7 +489,8 @@ def init_db():
 
     conn.commit()
 
-init_db()
+
 # ---------------- RUN ----------------
 if __name__ == "__main__":
+    init_db()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
