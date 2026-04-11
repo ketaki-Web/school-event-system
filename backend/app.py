@@ -60,6 +60,7 @@ def register_user():
     )
 
     conn.commit()
+    conn.close()
     return redirect("/login")
 
 # ---------------- LOGIN ----------------
@@ -78,20 +79,22 @@ def login_user():
     )
     user = cursor.fetchone()
 
-    if user:
         if user[3] == password:  # ✅ Corrected from user[2]
             session['user'] = user[1]
             session['user_email'] = user[2]
             session['role'] = user[4]
             session['school'] = user[5]
             
+            conn.close()
             if user[4] == 'teacher':
                 return redirect('/teacher')
             else:
                 return redirect('/student')
         else:
+            conn.close()
             return "Wrong password"
     else:
+        conn.close()
         return "User not found"
 # ---------------- STUDENT ----------------
 @app.route("/student")
@@ -123,6 +126,8 @@ def student_dashboard():
     # 🔥 NEW: Registered count
     registered_count = len(registered_events)
 
+    conn.close()
+
     return render_template(
         "student-dashboard.html",
         registered_events=registered_events,
@@ -147,6 +152,7 @@ def browse_events():
     )
 
     events = cursor.fetchall()
+    conn.close()
 
     return render_template("browse-events.html", events=events)
 
@@ -163,6 +169,7 @@ def event_details(event_id):
     )
 
     event = cursor.fetchone()
+    conn.close()
 
     return render_template("event-details.html", event=event, event_id=event_id)
 
@@ -189,6 +196,7 @@ def register_event():
     )
 
     if cursor.fetchone():
+        conn.close()
         return "Already registered"
 
     cursor.execute(
@@ -223,6 +231,7 @@ def teacher_dashboard():
         (session.get("school"),)
     )
     events = cursor.fetchall()
+    conn.close()
 
     return render_template("teacher-dashboard.html",
                            suggestions=suggestions,
@@ -267,6 +276,7 @@ def view_registrations():
     """, (session.get("school"),))
 
     data = cursor.fetchall()
+    conn.close()
 
     return render_template("view-registrations.html", registrations=data)
 
@@ -283,6 +293,7 @@ def manage_events():
     )
 
     events = cursor.fetchall()
+    conn.close()
 
     return render_template("manage-events.html", events=events)
 
@@ -309,6 +320,7 @@ def edit_event_page(id):
     )
 
     event = cursor.fetchone()
+    conn.close()
 
     return render_template("edit-event.html", event=event)
 
@@ -348,6 +360,7 @@ def results():
     )
 
     data = cursor.fetchall()
+    conn.close()
 
     return render_template("results.html", results=data)
 
@@ -375,6 +388,7 @@ def submit_suggestion():
     )
 
     conn.commit()
+    conn.close()
     return redirect("/student")
 
 # ---------------- APPROVE ----------------
@@ -407,6 +421,7 @@ def reject_suggestion(id):
 
     cursor.execute("UPDATE suggestions SET status='rejected' WHERE id=%s", (id,))
     conn.commit()
+    conn.close()
 
     return redirect("/teacher")
 
