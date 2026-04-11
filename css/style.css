@@ -1,22 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ===============================
-   GLOBAL SETTINGS & VARIABLES
-================================ */
 :root {
-    --bg-color: #0b0f19;
-    --text-primary: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent-1: #6366f1; /* Indigo */
-    --accent-2: #8b5cf6; /* Violet */
-    --accent-3: #ec4899; /* Pink */
+    --bg-primary: #f8fafc; /* Professional light gray */
+    --surface: #ffffff; /* Clean white for cards */
+    --text-primary: #0f172a; /* Slate 900 for high readability */
+    --text-secondary: #475569; /* Slate 600 for supportive text */
+    --border-color: #e2e8f0;
+    --primary-color: #2563eb; /* Trustworthy UI Blue */
+    --primary-hover: #1d4ed8;
     
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    /* This exactly matches the GIF background from your landing page */
+    --hero-bg-grad: linear-gradient(135deg, #304181, #323b85);
     
-    --font-heading: 'Outfit', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.06), 0 4px 6px -2px rgba(0,0,0,0.04);
+    --shadow-hover: 0 12px 24px -4px rgba(37, 99, 235, 0.15);
 }
 
 html {
@@ -27,385 +26,323 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    font-family: var(--font-body);
-    background-color: var(--bg-color);
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-primary);
     color: var(--text-primary);
     margin: 0;
     padding: 0;
-    position: relative;
-    overflow-x: hidden;
-}
-
-/* Stunning Animated Background Mesh */
-body::before, body::after {
-    content: '';
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(140px);
-    z-index: -1;
-    animation: drift 20s infinite alternate ease-in-out;
-    opacity: 0.6;
-}
-
-body::before {
-    top: -100px;
-    left: -100px;
-    background: radial-gradient(circle, var(--accent-1) 0%, rgba(0,0,0,0) 70%);
-}
-
-body::after {
-    bottom: -150px;
-    right: -100px;
-    background: radial-gradient(circle, var(--accent-3) 0%, rgba(0,0,0,0) 70%);
-    animation-delay: -10s;
-}
-
-@keyframes drift {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(100px, 150px) scale(1.2); }
 }
 
 main {
     flex: 1;
 }
 
-h1, h2, h3, h4, h5, h6, .navbar-brand {
-    font-family: var(--font-heading);
+h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
 }
 
 p {
-    color: var(--text-muted);
-    font-weight: 300;
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
-/* Improve external icons visibility in dark mode */
-img[src*="flaticon.com"] {
-    filter: invert(1) brightness(1.5) contrast(1.2);
-    margin-bottom: 15px;
-}
-
 /* ===============================
-   NAVBAR (Glassmorphism)
+   NAVBAR (Clean White Professional)
 ================================ */
 .navbar {
-    background: rgba(11, 15, 25, 0.4) !important;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-bottom: 1px solid var(--glass-border);
-    transition: all 0.3s ease;
-    padding: 15px 0;
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 0;
+    box-shadow: var(--shadow-sm);
 }
 
 .navbar-brand {
-    font-weight: 800;
-    font-size: 26px;
-    letter-spacing: -0.5px;
-    background: linear-gradient(to right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.nav-link {
+    font-weight: 700;
+    font-size: 22px;
     color: var(--text-primary) !important;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+}
+
+/* Force override bootstrap navbar-dark classes */
+.navbar .nav-link {
+    color: var(--text-secondary) !important;
     font-weight: 500;
-    margin: 0 10px;
-    opacity: 0.8;
-    transition: all 0.3s ease;
-    position: relative;
+    transition: 0.2s;
 }
 
-.nav-link:hover {
-    opacity: 1;
-    color: #fff !important;
+.navbar .nav-link:hover {
+    color: var(--primary-color) !important;
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 50%;
-    background: var(--accent-2);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
+/* Keep the register button white */
+.navbar .btn-primary.nav-link {
+    color: #ffffff !important;
 }
-.nav-link:not(.btn):hover::after { width: 100%; }
 
 /* ===============================
-   HERO SECTION
+   HERO SECTION (Matching GIF)
 ================================ */
 .hero-section {
+    background: var(--hero-bg-grad);
+    color: #ffffff;
     padding: 100px 20px 80px;
-    position: relative;
-    background: transparent;
+    /* This removes harsh lines bridging the section and the transparent GIF edge */
+}
+
+.hero-section *:not(img) {
+    color: #ffffff;
 }
 
 .hero-title {
-    font-size: 64px;
-    font-weight: 800;
-    line-height: 1.15;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.2;
     margin-bottom: 24px;
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 30px rgba(165, 180, 252, 0.2));
+    letter-spacing: -0.02em;
 }
 
 .hero-text {
-    font-size: 20px;
+    font-size: 18px;
     max-width: 600px;
-    color: var(--text-muted);
-    margin-bottom: 40px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 32px;
 }
 
 /* ===============================
-   BUTTONS (Premium glowing)
+   BUTTONS (Minimal & Classy)
 ================================ */
 .btn {
-    font-family: var(--font-body);
-    font-weight: 600;
-    border-radius: 8px;
-    padding: 12px 24px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 0.5px;
-    border: 1px solid transparent;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+    border: none;
+    letter-spacing: 0;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.btn-primary::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(99, 102, 241, 0.5);
-    color: #fff;
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.25);
+    color: #ffffff;
 }
-.btn-primary:hover::before { opacity: 1; }
 
 .btn-reject {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #ef4444;
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 14px;
 }
+
 .btn-reject:hover {
-    background: rgba(239, 68, 68, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
-    color: #fff;
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
 }
 
 /* ===============================
-   GLASS CARDS & SECTIONS
+   CARDS (Clean UI Surfaces)
 ================================ */
-/* We target the existing class names to cleanly override */
-.card, .event-card, .result-card, .login-card, .custom-card, .glass {
-    background: var(--glass-bg) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border) !important;
-    border-radius: 16px !important;
-    box-shadow: var(--glass-shadow) !important;
+.card, .event-card, .result-card, .login-card, .custom-card {
+    background: var(--surface) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 24px;
+    box-shadow: var(--shadow-sm) !important;
+    transition: all 0.2s ease;
     color: var(--text-primary);
-    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-    overflow: hidden;
-    position: relative;
-}
-
-.login-section, .results-section {
-    background: transparent !important;
 }
 
 .card:hover, .event-card:hover, .result-card:hover, .custom-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover) !important;
+    border-color: #cbd5e1 !important;
 }
 
 .card h3, .card h5 {
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 12px;
+    font-weight: 600;
 }
 
 .card p {
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 /* Dashboard specific classes cleanup */
+.custom-card {
+    position: relative;
+    padding-left: 28px;
+}
+
 .custom-card::before {
     content: "";
     position: absolute;
     left: 0;
     top: 0;
-    width: 6px;
+    width: 4px;
     height: 100%;
-    background: linear-gradient(180deg, var(--accent-1), var(--accent-3));
-    border-radius: 6px 0 0 6px;
+    background: var(--primary-color);
+    border-radius: 12px 0 0 12px;
 }
 
 .icon-circle {
-    width: 55px;
-    height: 55px;
-    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
-    border: 1px solid rgba(139,92,246,0.2);
-    color: #a5b4fc;
+    width: 48px;
+    height: 48px;
+    background: #eff6ff; /* Very subtle blue */
+    color: var(--primary-color);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px !important;
-    font-size: 24px;
-    margin-right: 15px;
-    margin-bottom: 15px;
-    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px !important;
+    font-size: 20px;
+    margin-right: 16px;
+    margin-bottom: 12px;
+    transition: 0.2s ease;
 }
 
 .custom-card:hover .icon-circle {
-    transform: scale(1.1) rotate(5deg);
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    border-color: transparent;
-    color: #fff;
+    background: var(--primary-color);
+    color: #ffffff;
+}
+
+/* No icon inversion needed on clean light themes */
+img[src*="flaticon.com"] {
+    filter: none;
+    margin-bottom: 16px;
 }
 
 /* ===============================
    FORMS & INPUTS
 ================================ */
 .form-control, .form-select {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid var(--glass-border) !important;
-    color: #fff !important;
-    border-radius: 8px;
-    padding: 12px 15px;
-    transition: all 0.3s ease;
-    font-family: var(--font-body);
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-primary) !important;
+    border-radius: 6px;
+    padding: 10px 14px;
+    transition: all 0.2s ease;
+    font-family: inherit;
 }
 
 .form-control:focus, .form-select:focus {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: var(--accent-1) !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    outline: none;
 }
 
 .form-control::placeholder {
-    color: rgba(255,255,255,0.3) !important;
+    color: #94a3b8 !important;
 }
 
 label {
     font-weight: 500;
-    margin-bottom: 8px;
-    color: #e2e8f0;
+    margin-bottom: 6px;
+    color: #334155;
     font-size: 0.95rem;
 }
 
 /* ===============================
-   TABLES (Data Display)
+   TABLES
 ================================ */
-.table, .table-striped>tbody>tr:nth-of-type(odd)>* {
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    margin-top: 10px;
     background: transparent !important;
-    color: var(--text-primary) !important;
 }
 
 .table thead th {
-    background: rgba(255,255,255,0.05) !important;
-    color: #fff !important;
-    border-bottom: 1px solid var(--glass-border) !important;
-    font-family: var(--font-heading);
-    padding: 18px 15px;
-    text-transform: uppercase;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    border-top: 1px solid var(--border-color) !important;
+    padding: 12px 16px;
+    font-weight: 600;
     font-size: 13px;
-    letter-spacing: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-top: none !important;
 }
 
 .table tbody tr {
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    background: #ffffff !important;
 }
 
 .table tbody tr:hover {
-    background: rgba(255,255,255, 0.04) !important;
+    background: #f1f5f9 !important;
 }
 
 .table td {
-    padding: 18px 15px !important;
-    border-color: var(--glass-border) !important;
-    color: var(--text-muted) !important;
+    padding: 16px !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
     vertical-align: middle;
-}
-
-.table td, .table th {
-    background: transparent !important;
 }
 
 /* ===============================
    FOOTER
 ================================ */
 .footer {
-    background: rgba(11, 15, 25, 0.5) !important;
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--glass-border);
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
     padding: 60px 0 30px;
-    margin-top: 80px !important;
+    margin-top: auto;
 }
 
 .footer h5 {
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 600;
     margin-bottom: 20px;
 }
 
 .footer p {
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
 .footer a {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     text-decoration: none;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .footer a:hover {
-    color: var(--accent-3);
+    color: var(--primary-color);
 }
 
 .footer hr {
-    border-color: rgba(255,255,255,0.1);
+    border-color: var(--border-color);
     margin: 40px 0 20px;
 }
 
 /* ===============================
-   UTILITIES (Override Bootstrap themes)
+   UTILITIES
 ================================ */
-.text-dark { color: #f8fafc !important; }
-.text-muted { color: var(--text-muted) !important; }
-.bg-white, .bg-light { background-color: var(--glass-bg) !important; }
-.shadow-sm { box-shadow: var(--glass-shadow) !important; }
+/* Force text colors incase they have hardcoded classes */
+.text-dark { color: var(--text-primary) !important; }
+.text-muted { color: var(--text-secondary) !important; }
+.bg-white, .bg-light { background-color: var(--surface) !important; }
+.shadow-sm { box-shadow: var(--shadow-sm) !important; }
 
-/* Keep text readable in containers */
-.container {
-    color: #f8fafc;
+/* Keep section headers visible */
+.container > h1, .container > h2, .container > h3 {
+    color: var(--text-primary);
 }
 
-/* Specific component tweaks */
 .alert {
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    color: #a5b4fc;
-    backdrop-filter: blur(10px);
+    border-radius: 6px;
+    font-weight: 500;
 }
