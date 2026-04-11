@@ -1,310 +1,411 @@
-/* ===============================
-   GLOBAL PAGE LAYOUT (Sticky Footer)
-   👉 Controls full page layout + background
-================================ */
-
-html{
-scroll-behavior: smooth; /* smooth scrolling */
-}
-
-html, body{
-height:100%;
-}
-
-body{
-display:flex;
-flex-direction:column;
-min-height:100vh;
-font-family: 'Poppins', sans-serif; /* 🔥 CHANGE FONT HERE */
-background:#f5f7fa; /* 🔥 MAIN BACKGROUND COLOR */
-margin:0;
-padding:0;
-}
-
-main{
-flex:1;
-}
-
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap');
 
 /* ===============================
-   NAVBAR
-   👉 Top header styling
+   GLOBAL SETTINGS & VARIABLES
 ================================ */
-
-.navbar-brand{
-font-weight:700;
-font-size:22px;
-letter-spacing:1px;
+:root {
+    --bg-color: #0b0f19;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-1: #6366f1; /* Indigo */
+    --accent-2: #8b5cf6; /* Violet */
+    --accent-3: #ec4899; /* Pink */
+    
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
 }
 
-
-/* ===============================
-   HERO SECTION (Homepage Banner)
-   👉 Big top section styling
-================================ */
-
-.hero-section{
-background: linear-gradient(135deg,#304181,#323b85); /* 🔥 HERO COLOR */
-color:white;
-padding:90px 20px;
+html {
+    scroll-behavior: smooth;
 }
 
-.hero-title{
-font-size:48px;
-font-weight:700;
-}
-
-.hero-text{
-font-size:18px;
-max-width:600px;
-margin:auto;
-}
-
-
-/* ===============================
-   EVENT CARDS
-   👉 All event cards design
-================================ */
-
-.event-card{
-border:none;
-background: linear-gradient(135deg, #c8d4ef, #bdcedf);
-box-shadow:0 8px 20px rgba(220, 240, 198, 0.1); /* 🔥 SHADOW COLOR */
-border-radius:10px;
-transition: all 0.3s ease;
-}
-
-/* 🔥 HOVER EFFECT (card lift) */
-.event-card:hover{
-transform:translateY(-8px) scale(1.02);
-box-shadow:0 15px 30px rgba(0,0,0,0.2);
-}
-
-
-/* ===============================
-   RESULTS SECTION
-   👉 Result cards styling
-================================ */
-
-.results-section{
-background:#f4f6f9; /* 🔥 SECTION BG */
-}
-
-.result-card{
-border:none;
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
-border-radius:10px;
-transition: all 0.3s ease;
-}
-
-.result-card:hover{
-transform:translateY(-6px);
-box-shadow:0 12px 25px rgba(0,0,0,0.15);
-}
-
-
-/* ===============================
-   LOGIN & REGISTER PAGE
-================================ */
-
-.login-section{
-padding:100px 0;
-background:#f5f7fa;
-min-height:80vh;
-}
-
-.login-card{
-border:none;
-box-shadow:0 8px 25px rgba(0,0,0,0.1);
-border-radius:10px;
-padding:20px;
-}
-
-
-/* ===============================
-   FOOTER
-================================ */
-
-.footer{
-background:#1c1c1c; /* 🔥 FOOTER COLOR */
-color:white;
-padding:40px 0;
-margin-top:250px;
-}
-
-.footer a{
-color:#ddd;
-text-decoration:none;
-}
-
-.footer a:hover{
-color:white;
-}
-
-
-/* ===============================
-   BUTTONS (GLOBAL)
-   👉 Controls ALL buttons
-================================ */
-
-.btn{
-transition: all 0.25s ease;
-}
-
-/* 🔥 BUTTON HOVER */
-.btn:hover{
-transform: scale(1.05);
-box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-
-/* ===============================
-   PRIMARY BUTTON (Main color)
-   👉 Change theme color here
-================================ */
-
-.btn-primary{
-background: linear-gradient(45deg,#0088ff,#ee094264); /* 🔥 BUTTON COLOR */
-border:none;
-}
-
-.btn-primary:hover{
-background: linear-gradient(45deg,#ee0979,#8800ff);
-}
-
-
-/* ===============================
-   REJECT BUTTON (Teacher panel)
-================================ */
-
-.btn-reject{
-background-color:#ff6b6b;
-border:none;
-color:white;
-}
-
-.btn-reject:hover{
-background-color:#e63946;
-transform: scale(1.05);
-}
-
-
-/* ===============================
-   GLASS EFFECT (optional class)
-   👉 Use class="glass" if needed
-================================ */
-
-.glass{
-background: rgba(255,255,255,0.15);
-backdrop-filter: blur(10px);
-border-radius: 10px;
-border: 1px solid rgba(255,255,255,0.2);
-}
-
-
-/* ===============================
-   ANIMATIONS
-================================ */
-
-/* AOS animation timing */
-[data-aos]{
-transition-duration: 1s;
-}
-
-/* General card hover (backup effect) */
-.card{
-transition:0.3s ease;
-}
-
-.card:hover{
-transform: translateY(-5px) scale(1.02);
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-/*  ... */
-
-.custom-card {
-    position: relative;
+body {
     display: flex;
-    align-items: center;
-    background: #f8f9fb;
-    border-radius: 15px;
-    padding: 20px;
-    overflow: hidden;
-    margin-bottom: 20px;
-
-    transition: all 0.3s ease; /* smooth animation */
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
 }
 
-/* Blue left strip */
+/* Stunning Animated Background Mesh */
+body::before, body::after {
+    content: '';
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: -1;
+    animation: drift 20s infinite alternate ease-in-out;
+    opacity: 0.6;
+}
+
+body::before {
+    top: -100px;
+    left: -100px;
+    background: radial-gradient(circle, var(--accent-1) 0%, rgba(0,0,0,0) 70%);
+}
+
+body::after {
+    bottom: -150px;
+    right: -100px;
+    background: radial-gradient(circle, var(--accent-3) 0%, rgba(0,0,0,0) 70%);
+    animation-delay: -10s;
+}
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(100px, 150px) scale(1.2); }
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, h4, h5, h6, .navbar-brand {
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+p {
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.6;
+}
+
+/* Improve external icons visibility in dark mode */
+img[src*="flaticon.com"] {
+    filter: invert(1) brightness(1.5) contrast(1.2);
+    margin-bottom: 15px;
+}
+
+/* ===============================
+   NAVBAR (Glassmorphism)
+================================ */
+.navbar {
+    background: rgba(11, 15, 25, 0.4) !important;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    margin: 0 10px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    opacity: 1;
+    color: #fff !important;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    background: var(--accent-2);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+.nav-link:not(.btn):hover::after { width: 100%; }
+
+/* ===============================
+   HERO SECTION
+================================ */
+.hero-section {
+    padding: 100px 20px 80px;
+    position: relative;
+    background: transparent;
+}
+
+.hero-title {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(165, 180, 252, 0.2));
+}
+
+.hero-text {
+    font-size: 20px;
+    max-width: 600px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+/* ===============================
+   BUTTONS (Premium glowing)
+================================ */
+.btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 12px 24px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(99, 102, 241, 0.5);
+    color: #fff;
+}
+.btn-primary:hover::before { opacity: 1; }
+
+.btn-reject {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+.btn-reject:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+    color: #fff;
+}
+
+/* ===============================
+   GLASS CARDS & SECTIONS
+================================ */
+/* We target the existing class names to cleanly override */
+.card, .event-card, .result-card, .login-card, .custom-card, .glass {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--glass-shadow) !important;
+    color: var(--text-primary);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+}
+
+.login-section, .results-section {
+    background: transparent !important;
+}
+
+.card:hover, .event-card:hover, .result-card:hover, .custom-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.card h3, .card h5 {
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: var(--text-muted);
+}
+
+/* Dashboard specific classes cleanup */
 .custom-card::before {
     content: "";
     position: absolute;
     left: 0;
     top: 0;
-    width: 15px;
+    width: 6px;
     height: 100%;
-    background: #1e6de8;
-    border-radius: 10px 0 0 10px;
+    background: linear-gradient(180deg, var(--accent-1), var(--accent-3));
+    border-radius: 6px 0 0 6px;
 }
 
-/* Icon */
 .icon-circle {
     width: 55px;
     height: 55px;
-    background: #1e6de8;
-    color: white;
-    display: flex;
+    background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1));
+    border: 1px solid rgba(139,92,246,0.2);
+    color: #a5b4fc;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    font-size: 22px;
+    border-radius: 12px !important;
+    font-size: 24px;
     margin-right: 15px;
+    margin-bottom: 15px;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+.custom-card:hover .icon-circle {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    border-color: transparent;
+    color: #fff;
+}
+
+/* ===============================
+   FORMS & INPUTS
+================================ */
+.form-control, .form-select {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: #fff !important;
+    border-radius: 8px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    font-family: var(--font-body);
+}
+
+.form-control:focus, .form-select:focus {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--accent-1) !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.3) !important;
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
+
+/* ===============================
+   TABLES (Data Display)
+================================ */
+.table, .table-striped>tbody>tr:nth-of-type(odd)>* {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+.table thead th {
+    background: rgba(255,255,255,0.05) !important;
+    color: #fff !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    font-family: var(--font-heading);
+    padding: 18px 15px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.table tbody tr {
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background: rgba(255,255,255, 0.04) !important;
+}
+
+.table td {
+    padding: 18px 15px !important;
+    border-color: var(--glass-border) !important;
+    color: var(--text-muted) !important;
+    vertical-align: middle;
+}
+
+.table td, .table th {
+    background: transparent !important;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.footer {
+    background: rgba(11, 15, 25, 0.5) !important;
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    padding: 60px 0 30px;
+    margin-top: 80px !important;
+}
+
+.footer h5 {
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.footer p {
+    font-size: 14px;
+}
+
+.footer a {
+    color: var(--text-muted);
+    text-decoration: none;
     transition: 0.3s;
 }
 
-/* 🔥 Hover effect */
-.custom-card:hover {
-    transform: translateY(-8px); /* lift up */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+.footer a:hover {
+    color: var(--accent-3);
 }
 
-/* Icon animation on hover */
-.custom-card:hover .icon-circle {
-    transform: scale(1.1);
-    background: #09111c;
+.footer hr {
+    border-color: rgba(255,255,255,0.1);
+    margin: 40px 0 20px;
 }
 
-/* Text */
-.card-content h5 {
-    margin: 0;
-    font-weight: 600;
+/* ===============================
+   UTILITIES (Override Bootstrap themes)
+================================ */
+.text-dark { color: #f8fafc !important; }
+.text-muted { color: var(--text-muted) !important; }
+.bg-white, .bg-light { background-color: var(--glass-bg) !important; }
+.shadow-sm { box-shadow: var(--glass-shadow) !important; }
+
+/* Keep text readable in containers */
+.container {
+    color: #f8fafc;
 }
 
-.card-content p {
-    margin: 5px 0 10px;
-    color: #666;
-}
-
-.custom-card {
-    box-shadow: 0 10px 50px rgba(120, 53, 53, 0.08);
-}
-
-
-
-.card-content h1 {
-    margin: 5px 0 0;
-    font-weight: bold;
-    color: #5b9cc1;
-}
-
-.card-content h1 {
-    font-size: 50px;
-    margin: 0;
-}
-
-.card-content h1 {
-    font-size: 30px;
-    margin: 2px 0 0;
+/* Specific component tweaks */
+.alert {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    backdrop-filter: blur(10px);
 }
