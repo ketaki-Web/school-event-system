@@ -35,7 +35,17 @@ flex:1;
 font-weight:700;
 font-size:22px;
 letter-spacing:1px;
+color: #000000 !important;
+display: flex !important;
+align-items: center !important;
+white-space: nowrap;
 }
+
+.navbar-brand img {
+display: inline-block;
+margin-right: 8px;
+}
+
 
 
 /* ===============================
@@ -126,7 +136,7 @@ padding:20px;
 ================================ */
 
 .footer{
-background:#1c1c1c; /* 🔥 FOOTER COLOR */
+background:#000000; /* 🔥 FOOTER COLOR */
 color:white;
 padding:40px 0;
 margin-top:250px;
