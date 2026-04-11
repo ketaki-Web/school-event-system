@@ -7,7 +7,8 @@ app.secret_key = "secret123"
 
 # DB CONNECTION
 def get_conn():
-    return psycopg2.connect(os.getenv("DATABASE_URL"))
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    return conn
 
 # STATIC
 @app.route('/css/<path:filename>')
@@ -78,9 +79,16 @@ def login_user():
     user = cursor.fetchone()
 
     if user:
-        if user[2] == password:
+        if user[3] == password:  # ✅ Corrected from user[2]
             session['user'] = user[1]
-            return redirect('/dashboard')
+            session['user_email'] = user[2]
+            session['role'] = user[4]
+            session['school'] = user[5]
+            
+            if user[4] == 'teacher':
+                return redirect('/teacher')
+            else:
+                return redirect('/student')
         else:
             return "Wrong password"
     else:
@@ -191,6 +199,7 @@ def register_event():
     )
 
     conn.commit()
+    conn.close()
 
     return redirect("/student")
 # ---------------- TEACHER ----------------
@@ -442,7 +451,8 @@ def init_db():
         title TEXT,
         description TEXT,
         date TEXT,
-        school TEXT
+        school TEXT,
+        location TEXT
     );
     """)
 
@@ -461,6 +471,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS suggestions (
         id SERIAL PRIMARY KEY,
         title TEXT,
+        category TEXT,
         description TEXT,
         location TEXT,
         status TEXT,
@@ -471,16 +482,22 @@ def init_db():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS results (
         id SERIAL PRIMARY KEY,
-        event_id INTEGER,
-        winner TEXT,
+        event_name TEXT,
+        winner_name TEXT,
+        position TEXT,
         school TEXT
     );
     """)
 
     conn.commit()
+    conn.close()
 
+
+# Initialize DB
+init_db()
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
-    init_db()
+    # app.run below
+
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
