@@ -72,23 +72,17 @@ def login_user():
     password = request.form.get("password")
     school = request.form.get("school")
 
-    cursor.execute(
-        "SELECT role FROM users WHERE email=%s AND password=%s AND school=%s",
-        (email, password, school)
-    )
+    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+user = cursor.fetchone()
 
-    user = cursor.fetchone()
-
-    if user:
-        session["user_email"] = email
-        session["school"] = school
-
-        if user[0] == "student":
-            return redirect("/student")
-        else:
-            return redirect("/teacher")
-
-    return "Invalid login"
+if user:
+    if user[3] == password:   # password column index
+        session['user'] = user[2]  # email
+        return redirect('/dashboard')
+    else:
+        return "Wrong password"
+else:
+    return "User not found"
 
 # ---------------- STUDENT ----------------
 @app.route("/student")
