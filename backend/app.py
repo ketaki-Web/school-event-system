@@ -7,7 +7,7 @@ app.secret_key = "secret123"
 
 # DB CONNECTION
 def get_conn():
-    return psycopg2.connect(os.environ.get("DATABASE_URL"))
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
 
 # STATIC
 @app.route('/css/<path:filename>')
@@ -64,7 +64,6 @@ def register_user():
 # ---------------- LOGIN ----------------
 @app.route("/login-user", methods=["POST"])
 def login_user():
-
     conn = get_conn()
     cursor = conn.cursor()
 
@@ -79,8 +78,8 @@ def login_user():
     user = cursor.fetchone()
 
     if user:
-        if user[2] == password:   # password column
-            session['user'] = user[1]  # email
+        if user[2] == password:
+            session['user'] = user[1]
             return redirect('/dashboard')
         else:
             return "Wrong password"
