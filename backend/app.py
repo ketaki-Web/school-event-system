@@ -72,18 +72,20 @@ def login_user():
     password = request.form.get("password")
     school = request.form.get("school")
 
-    cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-user = cursor.fetchone()
+    cursor.execute(
+        "SELECT * FROM users WHERE email=%s AND school=%s",
+        (email, school)
+    )
+    user = cursor.fetchone()
 
-if user:
-    if user[3] == password:   # password column index
-        session['user'] = user[2]  # email
-        return redirect('/dashboard')
+    if user:
+        if user[2] == password:   # password column
+            session['user'] = user[1]  # email
+            return redirect('/dashboard')
+        else:
+            return "Wrong password"
     else:
-        return "Wrong password"
-else:
-    return "User not found"
-
+        return "User not found"
 # ---------------- STUDENT ----------------
 @app.route("/student")
 def student_dashboard():
