@@ -7,7 +7,10 @@ app.secret_key = "secret123"
 
 # DB CONNECTION
 def get_conn():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    db_url = os.getenv("DATABASE_URL")
+    if not db_url:
+        raise ValueError("CRITICAL: DATABASE_URL is not set. Check your environment variables!")
+    conn = psycopg2.connect(db_url)
     return conn
 
 # STATIC
@@ -44,58 +47,69 @@ def logout():
 # ---------------- REGISTER USER ----------------
 @app.route("/register-user", methods=["POST"])
 def register_user():
+    conn = None
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
 
-    conn = get_conn()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "INSERT INTO users (name, email, password, role, school) VALUES (%s,%s,%s,%s,%s)",
-        (
-            request.form.get("name"),
-            request.form.get("email"),
-            request.form.get("password"),
-            request.form.get("role"),
-            request.form.get("school")
+        cursor.execute(
+            "INSERT INTO users (name, email, password, role, school) VALUES (%s,%s,%s,%s,%s)",
+            (
+                request.form.get("name"),
+                request.form.get("email"),
+                request.form.get("password"),
+                request.form.get("role"),
+                request.form.get("school")
+            )
         )
-    )
 
-    conn.commit()
-    conn.close()
-    return redirect("/login")
+        conn.commit()
+        return redirect("/login")
+    except psycopg2.IntegrityError:
+        if conn: conn.rollback()
+        return "Error: Email already registered! Please use a different email or try logging in.", 400
+    except Exception as e:
+        if conn: conn.rollback()
+        return f"Database Error during registration: {str(e)}", 500
+    finally:
+        if conn: conn.close()
 
 # ---------------- LOGIN ----------------
 @app.route("/login-user", methods=["POST"])
 def login_user():
-    conn = get_conn()
-    cursor = conn.cursor()
+    conn = None
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
 
-    email = request.form.get("email")
-    password = request.form.get("password")
-    school = request.form.get("school")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        school = request.form.get("school")
 
-    cursor.execute(
-        "SELECT * FROM users WHERE email=%s AND school=%s",
-        (email, school)
-    )
-    user = cursor.fetchone()
-    if user:
-        if user[3] == password:  # ✅ Corrected from user[2]
-            session['user'] = user[1]
-            session['user_email'] = user[2]
-            session['role'] = user[4]
-            session['school'] = user[5]
-            
-            conn.close()
-            if user[4] == 'teacher':
-                return redirect('/teacher')
+        cursor.execute(
+            "SELECT id, name, email, password, role, school FROM users WHERE email=%s AND school=%s",
+            (email, school)
+        )
+        user = cursor.fetchone()
+        if user:
+            if user[3] == password:  # password is at index 3
+                session['user'] = user[1]
+                session['user_email'] = user[2]
+                session['role'] = user[4]
+                session['school'] = user[5]
+                
+                if user[4] == 'teacher':
+                    return redirect('/teacher')
+                else:
+                    return redirect('/student')
             else:
-                return redirect('/student')
+                return "Wrong password", 401
         else:
-            conn.close()
-            return "Wrong password"
-    else:
-        conn.close()
-        return "User not found"
+            return "User not found", 404
+    except Exception as e:
+        return f"Database Error during login: {str(e)}", 500
+    finally:
+        if conn: conn.close()
 # ---------------- STUDENT ----------------
 @app.route("/student")
 def student_dashboard():
@@ -446,70 +460,93 @@ def update_event(id):
     return redirect("/manage-events")
 
 def init_db():
-    conn = get_conn()
-    cursor = conn.cursor()
+    conn = None
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name TEXT,
-        email TEXT UNIQUE,
-        password TEXT,
-        role TEXT,
-        school TEXT
-    );
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            email TEXT UNIQUE,
+            password TEXT,
+            role TEXT,
+            school TEXT
+        );
+        """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS events (
-        id SERIAL PRIMARY KEY,
-        title TEXT,
-        description TEXT,
-        date TEXT,
-        school TEXT,
-        location TEXT
-    );
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            id SERIAL PRIMARY KEY,
+            title TEXT,
+            description TEXT,
+            date TEXT,
+            school TEXT,
+            location TEXT
+        );
+        """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS registrations (
-        id SERIAL PRIMARY KEY,
-        event_id INTEGER,
-        student_email TEXT,
-        type TEXT,
-        group_name TEXT,
-        members TEXT
-    );
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS registrations (
+            id SERIAL PRIMARY KEY,
+            event_id INTEGER,
+            student_email TEXT,
+            type TEXT,
+            group_name TEXT,
+            members TEXT
+        );
+        """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS suggestions (
-        id SERIAL PRIMARY KEY,
-        title TEXT,
-        category TEXT,
-        description TEXT,
-        location TEXT,
-        status TEXT,
-        school TEXT
-    );
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS suggestions (
+            id SERIAL PRIMARY KEY,
+            title TEXT,
+            category TEXT,
+            description TEXT,
+            location TEXT,
+            status TEXT,
+            school TEXT
+        );
+        """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS results (
-        id SERIAL PRIMARY KEY,
-        event_name TEXT,
-        winner_name TEXT,
-        position TEXT,
-        school TEXT
-    );
-    """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS results (
+            id SERIAL PRIMARY KEY,
+            event_name TEXT,
+            winner_name TEXT,
+            position TEXT,
+            school TEXT
+        );
+        """)
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+    except Exception as e:
+        print(f"Failed to initialize database: {e}")
+    finally:
+        if conn:
+            conn.close()
 
 
 # Initialize DB
 init_db()
+
+@app.route("/reset-db")
+def reset_db():
+    conn = None
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS users, events, registrations, suggestions, results CASCADE;")
+        conn.commit()
+    except Exception as e:
+        if conn: conn.rollback()
+        return f"Error resetting DB: {e}", 500
+    finally:
+        if conn: conn.close()
+        
+    init_db()
+    return "<h3>Database tables successfully wiped and re-created!</h3><p>The missing columns have been fixed. <a href='/register'>Go Register</a></p>"
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":

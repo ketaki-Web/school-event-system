@@ -1,320 +1,472 @@
-/* ===============================
-   GLOBAL PAGE LAYOUT (Sticky Footer)
-   👉 Controls full page layout + background
-================================ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap');
 
-html{
-scroll-behavior: smooth; /* smooth scrolling */
+:root {
+    --bg-light: #f4f7f9;
+    --card-surface: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(255, 255, 255, 1);
+    
+    --text-heading: #0f172a;
+    --text-body: #475569;
+    --text-muted: #64748b;
+    
+    --primary-grad: linear-gradient(135deg, #2563eb, #4f46e5);
+    --primary-color: #3b82f6;
+    
+    --shadow-soft: 0 15px 35px -5px rgba(0,0,0,0.04), 0 5px 15px -3px rgba(0,0,0,0.02);
+    --shadow-hover: 0 25px 45px -10px rgba(37,99,235,0.15), 0 10px 20px -5px rgba(37,99,235,0.1);
 }
 
-html, body{
-height:100%;
+html {
+    scroll-behavior: smooth;
 }
 
-body{
-display:flex;
-flex-direction:column;
-min-height:100vh;
-font-family: 'Poppins', sans-serif; /* 🔥 CHANGE FONT HERE */
-background:#f5f7fa; /* 🔥 MAIN BACKGROUND COLOR */
-margin:0;
-padding:0;
-}
-
-main{
-flex:1;
-}
-
-
-/* ===============================
-   NAVBAR
-   👉 Top header styling
-================================ */
-
-.navbar-brand{
-font-weight:700;
-font-size:22px;
-letter-spacing:1px;
-color: #000000 !important;
-display: flex !important;
-align-items: center !important;
-white-space: nowrap;
-}
-
-.navbar-brand img {
-display: inline-block;
-margin-right: 8px;
-}
-
-
-
-/* ===============================
-   HERO SECTION (Homepage Banner)
-   👉 Big top section styling
-================================ */
-
-.hero-section{
-background: linear-gradient(135deg,#304181,#323b85); /* 🔥 HERO COLOR */
-color:white;
-padding:90px 20px;
-}
-
-.hero-title{
-font-size:48px;
-font-weight:700;
-}
-
-.hero-text{
-font-size:18px;
-max-width:600px;
-margin:auto;
-}
-
-
-/* ===============================
-   EVENT CARDS
-   👉 All event cards design
-================================ */
-
-.event-card{
-border:none;
-background: linear-gradient(135deg, #c8d4ef, #bdcedf);
-box-shadow:0 8px 20px rgba(220, 240, 198, 0.1); /* 🔥 SHADOW COLOR */
-border-radius:10px;
-transition: all 0.3s ease;
-}
-
-/* 🔥 HOVER EFFECT (card lift) */
-.event-card:hover{
-transform:translateY(-8px) scale(1.02);
-box-shadow:0 15px 30px rgba(0,0,0,0.2);
-}
-
-
-/* ===============================
-   RESULTS SECTION
-   👉 Result cards styling
-================================ */
-
-.results-section{
-background:#f4f6f9; /* 🔥 SECTION BG */
-}
-
-.result-card{
-border:none;
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
-border-radius:10px;
-transition: all 0.3s ease;
-}
-
-.result-card:hover{
-transform:translateY(-6px);
-box-shadow:0 12px 25px rgba(0,0,0,0.15);
-}
-
-
-/* ===============================
-   LOGIN & REGISTER PAGE
-================================ */
-
-.login-section{
-padding:100px 0;
-background:#f5f7fa;
-min-height:80vh;
-}
-
-.login-card{
-border:none;
-box-shadow:0 8px 25px rgba(0,0,0,0.1);
-border-radius:10px;
-padding:20px;
-}
-
-
-/* ===============================
-   FOOTER
-================================ */
-
-.footer{
-background:#000000; /* 🔥 FOOTER COLOR */
-color:white;
-padding:40px 0;
-margin-top:250px;
-}
-
-.footer a{
-color:#ddd;
-text-decoration:none;
-}
-
-.footer a:hover{
-color:white;
-}
-
-
-/* ===============================
-   BUTTONS (GLOBAL)
-   👉 Controls ALL buttons
-================================ */
-
-.btn{
-transition: all 0.25s ease;
-}
-
-/* 🔥 BUTTON HOVER */
-.btn:hover{
-transform: scale(1.05);
-box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-
-/* ===============================
-   PRIMARY BUTTON (Main color)
-   👉 Change theme color here
-================================ */
-
-.btn-primary{
-background: linear-gradient(45deg,#0088ff,#ee094264); /* 🔥 BUTTON COLOR */
-border:none;
-}
-
-.btn-primary:hover{
-background: linear-gradient(45deg,#ee0979,#8800ff);
-}
-
-
-/* ===============================
-   REJECT BUTTON (Teacher panel)
-================================ */
-
-.btn-reject{
-background-color:#ff6b6b;
-border:none;
-color:white;
-}
-
-.btn-reject:hover{
-background-color:#e63946;
-transform: scale(1.05);
-}
-
-
-/* ===============================
-   GLASS EFFECT (optional class)
-   👉 Use class="glass" if needed
-================================ */
-
-.glass{
-background: rgba(255,255,255,0.15);
-backdrop-filter: blur(10px);
-border-radius: 10px;
-border: 1px solid rgba(255,255,255,0.2);
-}
-
-
-/* ===============================
-   ANIMATIONS
-================================ */
-
-/* AOS animation timing */
-[data-aos]{
-transition-duration: 1s;
-}
-
-/* General card hover (backup effect) */
-.card{
-transition:0.3s ease;
-}
-
-.card:hover{
-transform: translateY(-5px) scale(1.02);
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-/*  ... */
-
-.custom-card {
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-body);
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
     position: relative;
+    overflow-x: hidden;
+}
+
+/* 🌟 Magical Animated Light Mesh */
+body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -1;
+    animation: float-mesh 25s infinite alternate ease-in-out;
+    opacity: 0.8;
+}
+
+body::before {
+    width: 600px;
+    height: 600px;
+    top: -100px;
+    left: -200px;
+    background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(255,255,255,0) 70%);
+}
+
+body::after {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(236,72,153,0.06) 0%, rgba(255,255,255,0) 70%);
+    animation-delay: -12s;
+}
+
+@keyframes float-mesh {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(150px, 150px) scale(1.1); }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.03em;
+}
+
+/* Beautiful Accent Underline for Section Headers */
+h1.text-center {
+    font-size: 44px;
+    font-weight: 800;
+    margin-bottom: 70px !important;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+h1.text-center::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 5px;
+    background: var(--primary-grad);
+    border-radius: 50px;
+    opacity: 0.8;
+}
+
+/* ===============================
+   NAVBAR (Floating Glass)
+================================ */
+.navbar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255,255,255,0.6);
+    padding: 18px 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.navbar-brand {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    background: var(--primary-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
     display: flex;
     align-items: center;
-    background: #f8f9fb;
-    border-radius: 15px;
-    padding: 20px;
-    overflow: hidden;
-    margin-bottom: 20px;
-
-    transition: all 0.3s ease; /* smooth animation */
 }
 
-/* Blue left strip */
+.navbar .nav-link {
+    color: var(--text-body) !important;
+    font-weight: 600;
+    margin: 0 12px;
+    transition: 0.3s ease;
+    position: relative;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary-color) !important;
+    transform: translateY(-2px);
+}
+
+.navbar .btn-primary.nav-link {
+    color: #ffffff !important;
+    margin-left: 20px;
+    padding: 10px 24px;
+}
+
+/* ===============================
+   HERO SECTION
+================================ */
+.hero-section {
+    position: relative;
+    /* Exactly matching the GIF */
+    background: linear-gradient(135deg, #304181, #323b85);
+    padding: 140px 20px 100px;
+    overflow: hidden;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 60px;
+    box-shadow: 0 25px 50px -12px rgba(48, 65, 129, 0.3);
+    margin-bottom: 80px;
+}
+
+.hero-section *:not(img) {
+    color: #ffffff;
+}
+
+.hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 25px;
+    letter-spacing: -0.03em;
+    background: linear-gradient(180deg, #ffffff 30%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.hero-text {
+    font-size: 20px;
+    max-width: 550px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 45px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+/* ===============================
+   BUTTONS (Premium Glow)
+================================ */
+.btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    border-radius: 12px;
+    padding: 14px 28px;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: none;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary {
+    background: var(--primary-grad);
+    color: #ffffff;
+    box-shadow: 0 10px 20px -5px rgba(37,99,235,0.4);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-20deg);
+    z-index: -1;
+    transition: all 0.6s ease;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px -5px rgba(37,99,235,0.6);
+}
+
+.btn-primary:hover::after {
+    left: 150%;
+}
+
+.btn-reject {
+    background: #fff0f0;
+    color: #e63946;
+    border: 1px solid #ffdcdc;
+}
+
+.btn-reject:hover {
+    background: #e63946;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(230,57,70,0.3);
+}
+
+/* ===============================
+   CARDS (Super Premium Light Glass)
+================================ */
+.card, .event-card, .result-card, .login-card, .custom-card {
+    background: var(--card-surface) !important;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--card-border) !important;
+    border-radius: 28px !important;
+    padding: 35px;
+    box-shadow: var(--shadow-soft) !important;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    color: var(--text-heading);
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover, .event-card:hover, .result-card:hover, .custom-card:hover {
+    transform: translateY(-10px) scale(1.01);
+    box-shadow: var(--shadow-hover) !important;
+    border-color: rgba(255,255,255,1) !important;
+    background: rgba(255,255,255,0.95) !important;
+}
+
+.card h3, .card h5 {
+    color: var(--text-heading);
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+
+.card p {
+    color: var(--text-muted);
+}
+
+/* Features page icons */
+img[src*="flaticon.com"] {
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    margin-bottom: 25px;
+}
+.card:hover img[src*="flaticon.com"] {
+    transform: translateY(-8px) scale(1.1);
+}
+
+/* ===============================
+   DASHBOARD CUSTOM CARDS
+================================ */
+.custom-card {
+    padding-left: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Beautiful accent strip */
 .custom-card::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 0;
-    width: 15px;
-    height: 100%;
-    background: #1e6de8;
-    border-radius: 10px 0 0 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 40%;
+    background: var(--primary-grad);
+    border-radius: 0 8px 8px 0;
+    opacity: 0.5;
+    transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Icon */
+.custom-card:hover::before {
+    height: 70%;
+    opacity: 1;
+    width: 8px;
+}
+
 .icon-circle {
-    width: 55px;
-    height: 55px;
-    background: #1e6de8;
-    color: white;
-    display: flex;
+    width: 65px;
+    height: 65px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    color: var(--primary-color);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    font-size: 22px;
-    margin-right: 15px;
-
-    transition: 0.3s;
+    border-radius: 20px !important;
+    font-size: 28px;
+    margin-right: 20px;
+    margin-bottom: 25px;
+    transition: 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(0,0,0,0.03);
 }
 
-/* 🔥 Hover effect */
-.custom-card:hover {
-    transform: translateY(-8px); /* lift up */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* Icon animation on hover */
 .custom-card:hover .icon-circle {
-    transform: scale(1.1);
-    background: #09111c;
+    background: var(--primary-grad);
+    color: #ffffff;
+    transform: scale(1.1) rotate(-8deg);
+    box-shadow: 0 15px 30px rgba(37,99,235,0.3);
 }
 
-/* Text */
-.card-content h5 {
-    margin: 0;
+/* ===============================
+   FORMS & INPUTS
+================================ */
+.form-control, .form-select {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-heading) !important;
+    border-radius: 14px;
+    padding: 16px 20px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-family: inherit;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.01) inset;
+    font-size: 16px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.15) !important;
+    outline: none;
+    background: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.form-control::placeholder {
+    color: #94a3b8 !important;
+}
+
+.form-label, label {
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
+    margin-bottom: 10px;
+    color: #334155;
+    font-size: 0.95rem;
+    padding-left: 2px;
 }
 
-.card-content p {
-    margin: 5px 0 10px;
-    color: #666;
+/* ===============================
+   TABLES (Floating Rows)
+================================ */
+.table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    width: 100%;
+    margin-top: 20px;
+    background: transparent !important;
 }
 
-.custom-card {
-    box-shadow: 0 10px 50px rgba(120, 53, 53, 0.08);
+.table thead th {
+    background: transparent !important;
+    color: var(--text-muted) !important;
+    padding: 16px 24px;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none !important;
 }
 
-
-
-.card-content h1 {
-    margin: 5px 0 0;
-    font-weight: bold;
-    color: #5b9cc1;
+.table tbody tr {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: rgba(255,255,255,0.85) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
 }
 
-.card-content h1 {
-    font-size: 50px;
-    margin: 0;
+.table tbody tr td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
+.table tbody tr td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+
+.table tbody tr:hover {
+    background: #ffffff !important;
+    box-shadow: 0 12px 25px rgba(37,99,235,0.08);
+    transform: scale(1.015) translateY(-2px);
 }
 
-.card-content h1 {
-    font-size: 30px;
-    margin: 2px 0 0;
+.table td {
+    padding: 24px !important;
+    border: none !important;
+    color: var(--text-heading) !important;
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+/* ===============================
+   FOOTER (Floating Island)
+================================ */
+.footer {
+    background: #ffffff;
+    border-radius: 50px 50px 0 0;
+    padding: 80px 0 40px;
+    margin-top: auto;
+    box-shadow: 0 -20px 50px rgba(0,0,0,0.03);
+    position: relative;
+    z-index: 10;
+}
+
+.footer h5 {
+    color: var(--text-heading);
+    font-weight: 800;
+    margin-bottom: 24px;
+    font-size: 20px;
+}
+
+.footer p {
+    color: var(--text-muted);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.footer a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.footer a:hover {
+    color: var(--primary-color);
+}
+
+.footer hr {
+    border-color: #e2e8f0;
+    margin: 60px 0 30px;
+}
+
+/* ===============================
+   UTILITIES & ALIGNMENT
+================================ */
+.text-dark { color: var(--text-heading) !important; }
+.text-muted { color: var(--text-muted) !important; }
+
+/* Dashboard alignment classes */
+.login-section, .results-section {
+    padding: 100px 0;
+    min-height: 80vh;
 }
