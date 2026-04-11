@@ -87,12 +87,12 @@ def login_user():
         school = request.form.get("school")
 
         cursor.execute(
-            "SELECT * FROM users WHERE email=%s AND school=%s",
+            "SELECT id, name, email, password, role, school FROM users WHERE email=%s AND school=%s",
             (email, school)
         )
         user = cursor.fetchone()
         if user:
-            if user[3] == password:  # ✅ Corrected from user[2]
+            if user[3] == password:  # password is at index 3
                 session['user'] = user[1]
                 session['user_email'] = user[2]
                 session['role'] = user[4]
@@ -530,6 +530,23 @@ def init_db():
 
 # Initialize DB
 init_db()
+
+@app.route("/reset-db")
+def reset_db():
+    conn = None
+    try:
+        conn = get_conn()
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS users, events, registrations, suggestions, results CASCADE;")
+        conn.commit()
+    except Exception as e:
+        if conn: conn.rollback()
+        return f"Error resetting DB: {e}", 500
+    finally:
+        if conn: conn.close()
+        
+    init_db()
+    return "<h3>Database tables successfully wiped and re-created!</h3><p>The missing columns have been fixed. <a href='/register'>Go Register</a></p>"
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
