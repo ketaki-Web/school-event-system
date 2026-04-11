@@ -78,7 +78,7 @@ def login_user():
         (email, school)
     )
     user = cursor.fetchone()
-
+    if user:
         if user[3] == password:  # ✅ Corrected from user[2]
             session['user'] = user[1]
             session['user_email'] = user[2]
