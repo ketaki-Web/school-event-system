@@ -43,21 +43,26 @@ SchoolEvHub
 
 <div class="collapse navbar-collapse" id="navbarNav">
 
-<ul class="navbar-nav ms-auto">
-
-<li class="nav-item">
-<a class="nav-link active" href="/">Home</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link" href="/select-school">Login</a>
-</li>
-
-<li class="nav-item">
-<a class="nav-link btn btn-primary text-white ms-2 px-3" href="/select-school">Register</a>
-</li>
-
-</ul>
+    <ul class="navbar-nav ms-auto align-items-center">
+      <li class="nav-item">
+        <a class="nav-link active" href="/">Home</a>
+      </li>
+      {% if session.get('user') %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% if session.role == 'admin' %}/admin{% elif session.role == 'teacher' %}/teacher{% else %}/student{% endif %}">Dashboard</a>
+        </li>
+        <li class="nav-item ms-lg-2">
+          <a class="nav-link btn btn-outline-danger btn-sm px-3 text-white border-danger" href="/logout">Logout</a>
+        </li>
+      {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/select-school">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary text-white ms-lg-2 px-3" href="/register">Register</a>
+        </li>
+      {% endif %}
+    </ul>
 
 </div>
 
