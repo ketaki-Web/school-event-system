@@ -146,6 +146,41 @@ Logout
 
 </section>
 
+<!-- 🔥 STUDENT VERIFICATION SECTION -->
+<section class="container mb-5" data-aos="fade-up">
+    <div class="card border-0 shadow-sm rounded-4 p-4 glass">
+        <h3 class="mb-4">🎓 Student Verification</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in pending_students %}
+                    <tr>
+                        <td class="fw-bold">{{ student[1] }}</td>
+                        <td class="text-muted">{{ student[2] }}</td>
+                        <td class="text-end">
+                            <a href="/teacher/approve-student/{{ student[0] }}" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+                                <i class="bi bi-check2-circle me-1"></i> Approve
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">No pending students for verification.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
 <h3 class="mb-4">Student Suggestions 💡</h3>
 
 <!-- 🔥 FILTER BUTTONS -->
