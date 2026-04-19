@@ -130,8 +130,11 @@ def login_user():
                     flash("Your account is still pending approval from your school teacher.", "warning")
                     return redirect(url_for("login", email=email))
 
-                # Check if it is admin or if school matches
-                if user[4] == 'admin' or user[5] == school:
+                # Check if it is admin or if school matches (handling whitespace)
+                db_school = user[5].strip() if user[5] else ""
+                form_school = school.strip() if school else ""
+                
+                if user[4] == 'admin' or db_school == form_school:
                     session['user'] = user[1]
                     session['user_email'] = user[2]
                     session['role'] = user[4]
