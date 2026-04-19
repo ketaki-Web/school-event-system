@@ -35,7 +35,6 @@
 <tbody>
 
 {% for r in registrations %}
-
 <tr>
 <td>{{ r[0] }}</td>
 <td>{{ r[1] }}</td>
@@ -43,7 +42,10 @@
 <td>{{ r[3] }}</td>
 <td>{{ r[4] }}</td>
 </tr>
-
+{% else %}
+<tr>
+    <td colspan="5" class="text-center text-muted py-4">No student registrations found for your school yet.</td>
+</tr>
 {% endfor %}
 
 </tbody>

@@ -40,7 +40,9 @@ def home():
 
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    # Get email from query params for persistence
+    email = request.args.get("email", "")
+    return render_template("login.html", email=email)
 
 @app.route("/register")
 def register():
@@ -75,18 +77,17 @@ def register_user():
 
         # Teachers cannot register themselves
         role = request.form.get("role")
-        if role == 'teacher':
-            flash("Teachers cannot register themselves. Please contact the Admin.", "danger")
-            return redirect("/register")
+        status = 'approved' if role == 'teacher' else 'pending' # Actually teachers now added by admin only
 
         cursor.execute(
-            "INSERT INTO users (name, email, password, role, school) VALUES (%s,%s,%s,%s,%s)",
+            "INSERT INTO users (name, email, password, role, school, status) VALUES (%s,%s,%s,%s,%s,%s)",
             (
                 request.form.get("name"),
                 request.form.get("email"),
                 request.form.get("password"),
-                request.form.get("role"),
-                request.form.get("school")
+                role,
+                request.form.get("school").strip() if request.form.get("school") else "",
+                status
             )
         )
 
@@ -117,19 +118,24 @@ def login_user():
 
         # Admin login check (admin doesnt need school)
         cursor.execute(
-            "SELECT id, name, email, password, role, school FROM users WHERE email=%s",
+            "SELECT id, name, email, password, role, school, status FROM users WHERE email=%s",
             (email,)
         )
         user = cursor.fetchone()
         
         if user:
             if user[3] == password:
+                # Check for approval
+                if user[6] != 'approved':
+                    flash("Your account is still pending approval from your school teacher.", "warning")
+                    return redirect(url_for("login", email=email))
+
                 # Check if it is admin or if school matches
                 if user[4] == 'admin' or user[5] == school:
                     session['user'] = user[1]
                     session['user_email'] = user[2]
                     session['role'] = user[4]
-                    session['school'] = user[5]
+                    session['school'] = user[5].strip() if user[5] else ""
                     
                     if user[4] == 'admin':
                         return redirect('/admin')
@@ -139,10 +145,10 @@ def login_user():
                         return redirect('/student')
                 else:
                     flash("Incorrect school selection for this account", "warning")
-                    return redirect("/login")
+                    return redirect(url_for("login", email=email))
             else:
                 flash("Wrong password", "danger")
-                return redirect("/login")
+                return redirect(url_for("login", email=email))
         else:
             flash("User not found", "danger")
             return redirect("/login")
@@ -286,12 +292,35 @@ def teacher_dashboard():
         (session.get("school"),)
     )
     events = cursor.fetchall()
+    
+    # 🔥 NEW: LIST PENDING STUDENTS
+    cursor.execute(
+        "SELECT id, name, email FROM users WHERE school=%s AND role='student' AND status='pending'",
+        (session.get("school"),)
+    )
+    pending_students = cursor.fetchall()
+
     conn.close()
 
     return render_template("teacher-dashboard.html",
                            suggestions=suggestions,
                            events=events,
+                           pending_students=pending_students,
                            school=session.get("school"))
+
+# --- CRUD: APPROVE STUDENT ---
+@app.route("/teacher/approve-student/<int:id>")
+def approve_student(id):
+    if session.get("role") != "teacher":
+        return redirect("/login")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET status='approved' WHERE id=%s AND school=%s", (id, session.get("school")))
+    conn.commit()
+    conn.close()
+    flash("Student approved successfully!", "success")
+    return redirect("/teacher")
 
 # ---------------- ADD EVENT ----------------
 @app.route("/add-event", methods=["GET", "POST"])
@@ -327,8 +356,8 @@ def view_registrations():
         SELECT e.title, r.student_email, r.type, r.group_name, r.members
         FROM registrations r
         JOIN events e ON r.event_id = e.id
-        WHERE e.school = %s
-    """, (session.get("school"),))
+        WHERE TRIM(e.school) = %s
+    """, (session.get("school").strip() if session.get("school") else "",))
 
     data = cursor.fetchall()
     conn.close()
@@ -547,8 +576,8 @@ def add_teacher():
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO users (name, email, password, role, school) VALUES (%s, %s, %s, %s, %s)",
-            (name, email, password, "teacher", school)
+            "INSERT INTO users (name, email, password, role, school, status) VALUES (%s, %s, %s, %s, %s, %s)",
+            (name, email, password, "teacher", school, "approved")
         )
         conn.commit()
     except Exception as e:
@@ -643,9 +672,17 @@ def init_db():
             email TEXT UNIQUE,
             password TEXT,
             role TEXT,
-            school TEXT
+            school TEXT,
+            status TEXT DEFAULT 'approved'
         );
         """)
+        
+        # 🔥 AUTO-MIGRATE: Add status column if it doesn't exist (for existing tables)
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'approved';")
+            conn.commit()
+        except Exception:
+            conn.rollback()
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS events (
@@ -699,8 +736,8 @@ def init_db():
         cursor.execute("SELECT * FROM users WHERE email = %s", (admin_email,))
         if not cursor.fetchone():
             cursor.execute(
-                "INSERT INTO users (name, email, password, role, school) VALUES (%s, %s, %s, %s, %s)",
-                (admin_name, admin_email, admin_pass, "admin", "System")
+                "INSERT INTO users (name, email, password, role, school, status) VALUES (%s, %s, %s, %s, %s, %s)",
+                (admin_name, admin_email, admin_pass, "admin", "System", "approved")
             )
             print(f"Admin user seeded: {admin_email}")
 

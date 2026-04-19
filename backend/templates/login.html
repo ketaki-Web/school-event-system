@@ -16,6 +16,7 @@
 <!-- CSS -->
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -58,24 +59,30 @@ SchoolEvHub
   {% endif %}
 {% endwith %}
 
-<h2 class="text-center fw-bold mb-4">Login</h2>
+<h2 class="text-center mb-1">Login</h2>
+<div id="schoolDisplay" class="text-center mb-4 text-primary fw-bold small">Direct System Access</div>
 
 <form action="/login-user" method="POST">
 
 <div class="mb-3">
-<label class="form-label">Email</label>
-<input type="email" name="email" class="form-control" required>
+<label class="form-label small fw-bold">EMAIL</label>
+<input type="email" name="email" class="form-control" value="{{ email }}" required>
 </div>
 
 <div class="mb-3">
-<label class="form-label">Password</label>
-<input type="password" name="password" class="form-control" required>
+<label class="form-label small fw-bold">PASSWORD</label>
+<div class="input-group">
+    <input type="password" name="password" id="password" class="form-control" required>
+    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+        <i class="bi bi-eye"></i>
+    </button>
+</div>
 </div>
 
 <!-- Hidden school -->
 <input type="hidden" name="school" id="schoolInput">
 
-<button type="submit" class="btn btn-primary w-100">
+<button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill mt-3 shadow-sm">
 Login
 </button>
 
@@ -105,13 +112,28 @@ Don't have an account? <a href="/register">Register</a>
 
 <!-- School Script -->
 <script>
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    const btn = input.nextElementSibling;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+
 let school = localStorage.getItem("school");
 
-if (!school) {
-    alert("Please select a school first!");
-    window.location.href = "/select-school";
-} else {
+if (school) {
     document.getElementById("schoolInput").value = school;
+    document.getElementById("schoolDisplay").innerText = "Login for " + school;
+    document.getElementById("schoolDisplay").classList.remove("text-muted");
+    document.getElementById("schoolDisplay").classList.add("text-primary");
+} else {
+    document.getElementById("schoolDisplay").innerText = "Admin / System Access";
 }
 </script>
 
