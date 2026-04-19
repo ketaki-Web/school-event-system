@@ -1,17 +1,28 @@
 import psycopg2
-from flask import Flask, render_template, request, redirect, session, send_from_directory
+from flask import Flask, render_template, request, redirect, session, send_from_directory, flash, url_for
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 app = Flask(__name__, template_folder="templates")
-app.secret_key = "secret123"
+app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key_123")
 
 # DB CONNECTION
 def get_conn():
     db_url = os.getenv("DATABASE_URL")
     if not db_url:
-        raise ValueError("CRITICAL: DATABASE_URL is not set. Check your environment variables!")
-    conn = psycopg2.connect(db_url)
-    return conn
+        # Fallback for local testing if not using docker/railway
+        db_url = "postgresql://postgres:postgres@localhost:5432/school_db"
+    
+    try:
+        conn = psycopg2.connect(db_url)
+        return conn
+    except Exception as e:
+        print(f"CRITICAL: Could not connect to database. URL: {db_url}")
+        print(f"Error: {e}")
+        raise e
 
 # STATIC
 @app.route('/css/<path:filename>')
@@ -33,11 +44,21 @@ def login():
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM colleges")
+    colleges = cursor.fetchall()
+    conn.close()
+    return render_template("register.html", colleges=colleges)
 
 @app.route("/select-school")
 def select_school():
-    return render_template("select-school.html")
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, location FROM colleges")
+    colleges = cursor.fetchall()
+    conn.close()
+    return render_template("select-school.html", colleges=colleges)
 
 @app.route("/logout")
 def logout():
@@ -51,6 +72,12 @@ def register_user():
     try:
         conn = get_conn()
         cursor = conn.cursor()
+
+        # Teachers cannot register themselves
+        role = request.form.get("role")
+        if role == 'teacher':
+            flash("Teachers cannot register themselves. Please contact the Admin.", "danger")
+            return redirect("/register")
 
         cursor.execute(
             "INSERT INTO users (name, email, password, role, school) VALUES (%s,%s,%s,%s,%s)",
@@ -67,10 +94,12 @@ def register_user():
         return redirect("/login")
     except psycopg2.IntegrityError:
         if conn: conn.rollback()
-        return "Error: Email already registered! Please use a different email or try logging in.", 400
+        flash("Email already registered! Please use a different email or try logging in.", "danger")
+        return redirect("/register")
     except Exception as e:
         if conn: conn.rollback()
-        return f"Database Error during registration: {str(e)}", 500
+        flash(f"Database Error: {str(e)}", "danger")
+        return redirect("/register")
     finally:
         if conn: conn.close()
 
@@ -86,28 +115,40 @@ def login_user():
         password = request.form.get("password")
         school = request.form.get("school")
 
+        # Admin login check (admin doesnt need school)
         cursor.execute(
-            "SELECT id, name, email, password, role, school FROM users WHERE email=%s AND school=%s",
-            (email, school)
+            "SELECT id, name, email, password, role, school FROM users WHERE email=%s",
+            (email,)
         )
         user = cursor.fetchone()
+        
         if user:
-            if user[3] == password:  # password is at index 3
-                session['user'] = user[1]
-                session['user_email'] = user[2]
-                session['role'] = user[4]
-                session['school'] = user[5]
-                
-                if user[4] == 'teacher':
-                    return redirect('/teacher')
+            if user[3] == password:
+                # Check if it is admin or if school matches
+                if user[4] == 'admin' or user[5] == school:
+                    session['user'] = user[1]
+                    session['user_email'] = user[2]
+                    session['role'] = user[4]
+                    session['school'] = user[5]
+                    
+                    if user[4] == 'admin':
+                        return redirect('/admin')
+                    elif user[4] == 'teacher':
+                        return redirect('/teacher')
+                    else:
+                        return redirect('/student')
                 else:
-                    return redirect('/student')
+                    flash("Incorrect school selection for this account", "warning")
+                    return redirect("/login")
             else:
-                return "Wrong password", 401
+                flash("Wrong password", "danger")
+                return redirect("/login")
         else:
-            return "User not found", 404
+            flash("User not found", "danger")
+            return redirect("/login")
     except Exception as e:
-        return f"Database Error during login: {str(e)}", 500
+        flash(f"Database Error: {str(e)}", "danger")
+        return redirect("/login")
     finally:
         if conn: conn.close()
 # ---------------- STUDENT ----------------
@@ -459,11 +500,141 @@ def update_event(id):
 
     return redirect("/manage-events")
 
+# ---------------- ADMIN ----------------
+@app.route("/admin")
+def admin_dashboard():
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT id, name, location FROM colleges")
+    colleges = cursor.fetchall()
+    
+    cursor.execute("SELECT id, name, email, school FROM users WHERE role='teacher'")
+    teachers = cursor.fetchall()
+    
+    conn.close()
+    return render_template("admin-dashboard.html", colleges=colleges, teachers=teachers)
+
+@app.route("/admin/add-college", methods=["POST"])
+def add_college():
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    name = request.form.get("name")
+    location = request.form.get("location")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO colleges (name, location) VALUES (%s, %s)", (name, location))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+@app.route("/admin/add-teacher", methods=["POST"])
+def add_teacher():
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    name = request.form.get("name")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    school = request.form.get("school")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "INSERT INTO users (name, email, password, role, school) VALUES (%s, %s, %s, %s, %s)",
+            (name, email, password, "teacher", school)
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return f"Error adding teacher: {e}"
+    finally:
+        conn.close()
+    
+    return redirect("/admin")
+
+# --- CRUD: DELETE COLLEGE ---
+@app.route("/admin/delete-college/<int:id>")
+def delete_college(id):
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM colleges WHERE id=%s", (id,))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+# --- CRUD: UPDATE COLLEGE ---
+@app.route("/admin/update-college", methods=["POST"])
+def update_college():
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    college_id = request.form.get("id")
+    name = request.form.get("name")
+    location = request.form.get("location")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE colleges SET name=%s, location=%s WHERE id=%s", (name, location, college_id))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+# --- CRUD: DELETE TEACHER ---
+@app.route("/admin/delete-teacher/<int:id>")
+def delete_teacher(id):
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE id=%s AND role='teacher'", (id,))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
+# --- CRUD: UPDATE TEACHER ---
+@app.route("/admin/update-teacher", methods=["POST"])
+def update_teacher():
+    if session.get("role") != "admin":
+        return redirect("/login")
+    
+    teacher_id = request.form.get("id")
+    name = request.form.get("name")
+    email = request.form.get("email")
+    school = request.form.get("school")
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET name=%s, email=%s, school=%s WHERE id=%s AND role='teacher'", 
+                   (name, email, school, teacher_id))
+    conn.commit()
+    conn.close()
+    return redirect("/admin")
+
 def init_db():
     conn = None
     try:
         conn = get_conn()
         cursor = conn.cursor()
+
+        # Update: Added colleges table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS colleges (
+            id SERIAL PRIMARY KEY,
+            name TEXT UNIQUE,
+            location TEXT
+        );
+        """)
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -520,6 +691,19 @@ def init_db():
         );
         """)
 
+        # 🔥 AUTO-SEED ADMIN
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@school.com")
+        admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
+        admin_name = os.getenv("ADMIN_NAME", "System Admin")
+
+        cursor.execute("SELECT * FROM users WHERE email = %s", (admin_email,))
+        if not cursor.fetchone():
+            cursor.execute(
+                "INSERT INTO users (name, email, password, role, school) VALUES (%s, %s, %s, %s, %s)",
+                (admin_name, admin_email, admin_pass, "admin", "System")
+            )
+            print(f"Admin user seeded: {admin_email}")
+
         conn.commit()
     except Exception as e:
         print(f"Failed to initialize database: {e}")
@@ -537,7 +721,7 @@ def reset_db():
     try:
         conn = get_conn()
         cursor = conn.cursor()
-        cursor.execute("DROP TABLE IF EXISTS users, events, registrations, suggestions, results CASCADE;")
+        cursor.execute("DROP TABLE IF EXISTS users, events, registrations, suggestions, results, colleges CASCADE;")
         conn.commit()
     except Exception as e:
         if conn: conn.rollback()

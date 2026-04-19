@@ -52,51 +52,32 @@ SchoolEvHub
 
 
 <!-- School Cards -->
-
 <section class="container mb-5">
-
 <div class="row g-4 justify-content-center">
 
-<!-- School 1 -->
+{% for college in colleges %}
 <div class="col-md-4" data-aos="zoom-in">
-<div class="card event-card text-center p-4">
-
-<h5>ADYPU School</h5>
-<p class="text-muted">Pune</p>
-
-<button class="btn btn-primary" onclick="selectSchool('ADYPU')">Select</button>
-
+<div class="card event-card text-center p-4 shadow-sm border-0 glass">
+    <h5 class="fw-bold">{{ college[0] }}</h5>
+    <p class="text-muted small">{{ college[1] }}</p>
+    <button class="btn btn-primary rounded-pill px-4" onclick="selectSchool('{{ college[0] }}')">Select</button>
 </div>
 </div>
-
-
-<!-- School 2 -->
-<div class="col-md-4" data-aos="zoom-in">
-<div class="card event-card text-center p-4">
-
-<h5>TKV School</h5>
-<p class="text-muted">Mumbai</p>
-
-<button class="btn btn-primary" onclick="selectSchool('TKV')">Select</button>
+{% else %}
+<div class="col-12 text-center py-5">
+    <div class="alert alert-info d-inline-block px-5 py-3 rounded-4 shadow-sm">
+        <h4 class="mb-0">🏫 No schools registered yet.</h4>
+        <p class="mb-0 mt-2 text-muted">Please contact system admin to add your school.</p>
+    </div>
+</div>
+{% endfor %}
 
 </div>
-</div>
+</section>
 
-
-<!-- School 3 -->
-<div class="col-md-4" data-aos="zoom-in">
-<div class="card event-card text-center p-4">
-
-<h5>KP School</h5>
-<p class="text-muted">Delhi</p>
-
-<button class="btn btn-primary" onclick="selectSchool('KP')">Select</button>
-
-</div>
-</div>
-
-</div>
-
+<section class="container text-center mb-5 pb-5">
+    <p class="text-muted">Not a student or teacher?</p>
+    <a href="/login" class="text-decoration-none fw-bold" onclick="selectSchool('System')">Login as System Admin</a>
 </section>
 
 </main>
